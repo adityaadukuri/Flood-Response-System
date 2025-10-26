@@ -66,6 +66,11 @@ async def root():
                 <p>Advanced flood risk assessment and emergency response platform</p>
             </div>
             
+            <div class="endpoint" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                <span class="method get" style="background: #dc3545;">NEW</span>
+                <strong><a href="/simulation">🌊 /simulation</a></strong> - 7-Day Flood Progression Simulation Dashboard
+            </div>
+            
             <div class="endpoint">
                 <span class="method get">GET</span>
                 <strong><a href="/map">/map</a></strong> - Interactive flood risk map
@@ -92,7 +97,7 @@ async def root():
             </div>
             
             <p style="margin-top: 30px; color: #666;">
-                🎯 <strong>Quick Start:</strong> Visit <code>/map</code> for the interactive visualization
+                🎯 <strong>Quick Start:</strong> Visit <code>/simulation</code> for 7-day flood forecasting or <code>/map</code> for current risk visualization
             </p>
         </body>
     </html>
@@ -303,9 +308,22 @@ async def interactive_map():
     except Exception as e:
         return f"<h2>Error generating map: {str(e)}</h2><p>Please ensure data_pipeline.py has been run first.</p>"
 
+# Try to integrate simulation features
+try:
+    from simulation_api import setup_simulation_api
+    setup_simulation_api(app)
+    SIMULATION_INTEGRATED = True
+    print("✅ Flood simulation features integrated")
+except ImportError:
+    SIMULATION_INTEGRATED = False
+    print("⚠️  Simulation features not available")
+
 if __name__ == "__main__":
     import uvicorn
     print("🚀 Starting Bangalore Flood Response System...")
     print("📍 Access the system at: http://localhost:8000")
     print("🗺️  Interactive map at: http://localhost:8000/map")
+    if SIMULATION_INTEGRATED:
+        print("🌊 Flood simulation at: http://localhost:8000/simulation")
+    print("📡 API documentation at: http://localhost:8000/docs")
     uvicorn.run(app, host="0.0.0.0", port=8000)
